@@ -1,13 +1,12 @@
-async function list(req, res, next) {
-  res.json({
-    data: [
-      { category_name: "category 1" },
-      { category_name: "category 2" },
-      { category_name: "category 3" },
-    ],
-  });
+const categoriesService = require("./categories.service"); // service object we just created
+
+function list(req, res, next) { // access the methods on the service obj to do CRUD ops
+  categoriesService
+    .list()
+    .then((data) => res.json({ data }))
+    .catch(next);
 }
 
 module.exports = {
-  list: [list],
+  list,
 };
