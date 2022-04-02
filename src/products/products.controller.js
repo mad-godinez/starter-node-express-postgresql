@@ -1,10 +1,8 @@
 const productsService = require("./products.service");
 
-function list(req, res, next) { //  "/products" endpoint 
-  productsService
-    .list()
-    .then((data) => res.json({ data }))
-    .catch(next);
+async function list(req, res, next) { //<-- next for error handling
+  const data = await productsService.list();
+  res.json({ data });
 }
 
 function read(req, res) {
@@ -12,17 +10,13 @@ function read(req, res) {
   res.json({ data });
 }
 /***** validation middleware *****/
-function productExists(req, res, next) { 
-  productsService
-    .read(req.params.productId)
-    .then((product) => {
-      if (product) {
-        res.locals.product = product;
-        return next();
-      }
-      next({ status: 404, message: `Product cannot be found.` });
-    })
-    .catch(next);
+async function productExists(req, res, next) {
+  const product = await productsService.read(req.params.productId);
+  if (product) {
+    res.locals.product = product;
+    return next();
+  }
+  next({ status: 404, message: `Product cannot be found.` });
 }
 module.exports = {
 	read: [productExists, read],

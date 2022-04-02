@@ -1,10 +1,8 @@
 const categoriesService = require("./categories.service"); // service object we just created
 
-function list(req, res, next) { // access the methods on the service obj to do CRUD ops
-  categoriesService
-    .list()
-    .then((data) => res.json({ data }))
-    .catch(next);
+async function list(req, res) {
+  const data = await categoriesService.list(); // executes knex query 
+  res.json({ data });
 }
 
 module.exports = {
