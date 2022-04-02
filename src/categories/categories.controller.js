@@ -1,4 +1,5 @@
 const categoriesService = require("./categories.service"); // service object we just created
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 async function list(req, res) {
   const data = await categoriesService.list(); // executes knex query 
@@ -6,5 +7,5 @@ async function list(req, res) {
 }
 
 module.exports = {
-  list,
+  list: asyncErrorBoundary(list),
 };

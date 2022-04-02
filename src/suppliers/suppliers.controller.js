@@ -1,4 +1,5 @@
 const suppliersService = require("./suppliers.service.js");
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 const hasProperties = require("../errors/hasProperties");
 
 /***** CRUD methods *****/
@@ -57,7 +58,16 @@ async function supplierExists(req, res, next) {
   next({ status: 404, message: `Supplier cannot be found.` });
 }
 module.exports = {
-	create: [hasOnlyValidProperties, hasRequiredProperties, create],
-	update: [supplierExists, hasOnlyValidProperties, hasRequiredProperties, update],
-  delete: [supplierExists, destroy],
+  create: [
+    hasOnlyValidProperties,
+    hasRequiredProperties,
+    asyncErrorBoundary(create),
+  ],
+  update: [
+    asyncErrorBoundary(supplierExists),
+    hasOnlyValidProperties,
+    hasRequiredProperties,
+    asyncErrorBoundary(update),
+  ],
+  delete: [asyncErrorBoundary(supplierExists), asyncErrorBoundary(destroy)],
 };
