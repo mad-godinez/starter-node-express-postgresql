@@ -1,6 +1,11 @@
 const knex = require("../db/connection");
-//top of file
 const mapProperties = require("../utils/map-properties");
+
+// type casts BIGFLOAT/string returns from aggregate functions -> .js floats
+var types = require('pg').types
+types.setTypeParser(types.builtins.NUMERIC, (value) => {
+  return parseFloat(value);
+});
 
 const addCategory = mapProperties({
    category_id: "category.category_id",
@@ -29,7 +34,7 @@ function listOutOfStockCount() {
     .where({ product_quantity_in_stock: 0 })
     .groupBy("out_of_stock");
 }
-//...
+
 function listPriceSummary() {
   return knex("products")
     .select("supplier_id")
@@ -39,7 +44,7 @@ function listPriceSummary() {
     .orderBy("supplier_id")
     .groupBy("supplier_id");
 }
-//...
+
 function listTotalWeightByProduct() {
   return knex("products")
     .select(
@@ -51,6 +56,7 @@ function listTotalWeightByProduct() {
     )
     .groupBy("product_title", "product_sku");
 }
+
 module.exports = {
   list,
   read,
